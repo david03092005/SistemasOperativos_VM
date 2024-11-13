@@ -1,0 +1,6 @@
+# Número de casos
+# Posición inicial del brazo
+# Posición anterior del brazo
+# Tamaño del disco
+# Cantidad de solicitudes
+# Lista de solicitudes

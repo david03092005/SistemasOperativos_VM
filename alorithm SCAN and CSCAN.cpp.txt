@@ -1,0 +1,170 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+
+void scan(int before, int head, vector<int> requests, int disk_size){
+	bool ascending = head > before; 
+	vector<int> route;				
+    int total_cost = 0;				
+	sort(requests.begin(), requests.end());
+	
+	vector<int> above, below;
+	for(int req : requests){
+		if(req > head) above.push_back(req);
+		else below.push_back(req);
+	}
+	
+	if(ascending){
+		if(!above.empty()){
+			for(int req : above){
+				route.push_back(req);
+				total_cost += abs(head - req);
+				head = req;			
+			}
+		}
+		if(!below.empty()){
+			total_cost += abs(head - disk_size);
+			head = disk_size;
+			route.push_back(disk_size);
+			
+			for(auto it = below.rbegin(); it != below.rend(); ++it){
+				route.push_back(*it);
+				total_cost += abs(head - *it);
+				head = *it;	
+			}
+		}
+	}
+	else{
+		if(!below.empty()){
+			for(auto it = below.rbegin(); it != below.rend(); ++it){
+				route.push_back(*it);
+				total_cost += abs(head - *it);
+				head = *it;	
+			}
+		}
+		if(!above.empty()){
+			total_cost += abs(head - 0);
+			head = 0;
+			route.push_back(0);
+			
+			for(int req : above){
+				route.push_back(req);
+				total_cost += abs(head - req);
+				head = req;			
+			}
+		}
+	}
+	cout << "Recorrido: ";
+    for (int pos : route) {
+        cout << pos << " ";
+    }
+    cout << endl;
+    
+    cout << "Longitud: " << total_cost << endl;
+    double time = static_cast<double>(total_cost) / route.size();
+    cout << "Tiempo promedio: " << time << endl;
+}
+
+void cscan(int before, int head, vector<int> requests, int disk_size){
+	bool ascending = head > before; // Determinar la direccion
+	vector<int> route;				// Almacenar recorrido
+    int total_cost = 0;				// Longitud total
+	sort(requests.begin(), requests.end());
+	
+	vector<int> above, below;
+	for(int req : requests){
+		if(req > head) above.push_back(req);
+		else below.push_back(req);
+	}
+	
+	if(ascending){
+		if(!above.empty()){
+			for(int req : above){
+				route.push_back(req);
+				total_cost += abs(head - req);
+				head = req;			
+			}
+		}
+		if(!below.empty()){
+			total_cost += abs(head - disk_size);
+			head = disk_size;
+			route.push_back(disk_size);
+			
+			total_cost += disk_size;
+			head = 0;
+			route.push_back(0);
+			
+			for(int req : below){
+				route.push_back(req);
+				total_cost += abs(head - req);
+				head = req;			
+			}
+		}
+	}
+	else{
+		if(!below.empty()){
+			for(auto it = below.rbegin(); it != below.rend(); ++it){
+				route.push_back(*it);
+				total_cost += abs(head - *it);
+				head = *it;	
+			}
+		}
+		if(!above.empty()){
+			total_cost += abs(head - 0);
+			head = 0;
+			route.push_back(0);
+			
+			total_cost += disk_size;
+			head = disk_size;
+			route.push_back(disk_size);
+			
+			for(auto it = above.rbegin(); it != above.rend(); ++it){
+				route.push_back(*it);
+				total_cost += abs(head - *it);
+				head = *it;	
+			}
+		}
+	}
+	cout << "Recorrido: ";
+    for (int pos : route) {
+        cout << pos << " ";
+    }
+    cout << endl;
+    
+    cout << "Longitud: " << total_cost << endl;
+    double time = static_cast<double>(total_cost) / route.size();
+    cout << "Tiempo promedio: " << time << endl;
+}
+
+int main(){
+	int cases;
+	ifstream inputFile("input.txt");
+	inputFile >> cases;
+	
+	for (int t = 0; t < cases; t++){
+		int head, before, disk_size, n;
+		inputFile >> head;
+	    inputFile >> before;
+	    inputFile >> disk_size;
+	    inputFile >> n;
+	    vector<int> requests(n);
+	    for (int i = 0; i < n; i++) {
+	        inputFile >> requests[i];
+	    }
+	    
+        cout << ">>>Caso de prueba " << t + 1 << ":" << endl;
+        cout << "        ALGORITMO SCAN " << endl;
+        scan(before, head, requests, disk_size);
+        cout << "--------------------------------------" << endl;
+        cout << "        ALGORITMO CSCAN " << endl;
+        cscan(before, head, requests, disk_size);
+        cout << " " << endl;
+	}
+	
+    inputFile.close();
+    return 0;
+}
