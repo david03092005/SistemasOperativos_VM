@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  # Servicio de Aplicación Web
+  app:
+    image: nginx:latest  # Utilizamos Nginx como servidor web
+    container_name: app_service
+    ports:
+      - "8000:80"  # Expone el puerto 80 del contenedor en el puerto 8000 de la VM para acceso desde el proxy inverso
+    networks:
+      - distributed_net  # Red compartida con otros servicios
+    volumes:
+      - ./html:/usr/share/nginx/html  # Monta contenido HTML en el servidor Nginx
+
+  # Servicio de Base de Datos (Ejemplo de Redis para caché)
+  db:
+    image: redis:latest  # Utiliza Redis como ejemplo de base de datos en caché
+    container_name: redis_service
+    ports:
+      - "6379:6379"  # Expone el puerto de Redis en la VM
+    networks:
+      - distributed_net  # Red compartida para la comunicación entre servicios
+
+networks:
+  distributed_net:
+    driver: bridge  # Red de tipo bridge para permitir comunicación entre contenedores
